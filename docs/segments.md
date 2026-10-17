@@ -8,5 +8,6 @@
 | S3b | Live Gemini smoke test (Forge) | done via real parseWorksheet → geminiService → normalizePayload (scripts/live-gemini.ts) |
 | S4 | KeySettingsModal, keyStore, CSP (S4-1…S4-5) | done |
 | S5 | Uploader, app machine, demo end-to-end | done |
-| S6–S9 | Games + VictoryReview | later |
+| S6 | soundFx + MemoryMatch | done |
+| S7–S9 | SpaceBlaster, BossQuest, VictoryReview | later |
 | S10 | Art, deploy.yml, CNAME, a11y/perf, push (with Don's OK) | later |
