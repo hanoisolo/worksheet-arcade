@@ -8,6 +8,8 @@ import ParsingScreen from "./components/ParsingScreen";
 import ErrorScreen from "./components/ErrorScreen";
 import ReadyScreen, { GAMES } from "./components/ReadyScreen";
 import GamePlaceholder from "./components/GamePlaceholder";
+import MemoryMatch from "./components/games/MemoryMatch";
+import MuteButton from "./components/MuteButton";
 import { appReducer, initialState } from "./state/appMachine";
 import type { AppState, GameId } from "./state/appMachine";
 import { parseWorksheet } from "./services/adapter";
@@ -128,14 +130,15 @@ export default function App() {
           className="flex items-center gap-2 sm:gap-3 rounded-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-cyan"
         >
           <Gamepad2
-            className="size-7 shrink-0 sm:size-8 text-pink"
+            className="hidden size-7 shrink-0 text-pink sm:block sm:size-8"
             aria-hidden="true"
           />
-          <span className="whitespace-nowrap text-xl font-extrabold tracking-tight sm:text-2xl">
+          <span className="whitespace-nowrap text-lg font-extrabold tracking-tight sm:text-2xl">
             Worksheet <span className="text-pink">Arcade</span>
           </span>
         </button>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <MuteButton />
           <button
             ref={keyButtonRef}
             type="button"
@@ -149,7 +152,7 @@ export default function App() {
             <span className="hidden sm:inline">{PROVIDERS[provider].label}</span>
           </button>
           <span
-            className={`rounded-full border px-2.5 py-1 text-xs font-bold whitespace-nowrap ${
+            className={`rounded-full border px-2 py-1 text-xs sm:px-2.5 font-bold whitespace-nowrap ${
               hasKey
                 ? "border-lime/40 bg-lime/15 text-lime"
                 : "border-amber/40 bg-amber/15 text-amber"
@@ -229,7 +232,14 @@ export default function App() {
             onHome={goHome}
           />
         )}
-        {state.phase === "playing" && (
+        {state.phase === "playing" && state.game === "memory" && (
+          <MemoryMatch
+            key={state.game}
+            payload={state.payload}
+            onBack={() => dispatch({ type: "BACK_TO_PICKER" })}
+          />
+        )}
+        {state.phase === "playing" && state.game !== "memory" && (
           <GamePlaceholder
             title={GAMES.find((g) => g.id === state.game)?.title ?? "Game"}
             onBack={() => dispatch({ type: "BACK_TO_PICKER" })}
