@@ -1,0 +1,6 @@
+node_modules
+dist
+.forge
+test-results
+playwright-report
+*.log
