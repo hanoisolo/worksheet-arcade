@@ -1,7 +1,8 @@
-export type Sfx = 'flip' | 'match' | 'miss' | 'win' | 'correct' | 'wrong' | 'hit'
+export type Sfx = 'flip' | 'match' | 'miss' | 'win' | 'correct' | 'wrong' | 'hit' | 'laser'
 
 type Note = {
   f: number
+  to?: number
   at: number
   dur: number
   type: OscillatorType
@@ -35,6 +36,10 @@ const SOUNDS: Record<Sfx, Note[]> = {
     { f: 1318.5, at: 0.42, dur: 0.4, type: 'triangle' },
   ],
   hit: [{ f: 110, at: 0, dur: 0.15, type: 'sawtooth' }],
+  laser: [
+    { f: 1400, to: 220, at: 0, dur: 0.25, type: 'sawtooth' },
+    { f: 900, to: 120, at: 0.03, dur: 0.22, type: 'square' },
+  ],
 }
 
 let ctx: AudioContext | null = null
@@ -57,11 +62,12 @@ export function playSfx(name: Sfx): void {
     if (!c) return
     if (c.state === 'suspended') void c.resume()
     const t0 = c.currentTime
-    for (const { f, at, dur, type } of SOUNDS[name]) {
+    for (const { f, to, at, dur, type } of SOUNDS[name]) {
       const osc = c.createOscillator()
       const g = c.createGain()
       osc.type = type
       osc.frequency.setValueAtTime(f, t0 + at)
+      if (to) osc.frequency.exponentialRampToValueAtTime(to, t0 + at + dur)
       g.gain.setValueAtTime(0.0001, t0 + at)
       g.gain.exponentialRampToValueAtTime(0.15, t0 + at + 0.01)
       g.gain.exponentialRampToValueAtTime(0.0001, t0 + at + dur)
