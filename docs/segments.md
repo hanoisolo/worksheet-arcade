@@ -4,8 +4,8 @@
 | S0 | Blueprint docs, git init, placeholder art (Forge) | done |
 | S1 | Scaffold + tooling + tokens + App shell (re-planned as S1a–S1d) | done |
 | S2 | Types, providers config, validate/repair, fixtures, mock data (S2a–S2c) | done |
-| S3 | http, prompt, schemas, 3 services, adapter (mocked tests) | todo |
-| S3b | Live Gemini smoke test (Forge) | done standalone (spec §5 request shape; re-run via app services after S3) |
+| S3 | http, prompt, schemas, 3 services, adapter (mocked tests) (S3-1…S3-6) | done |
+| S3b | Live Gemini smoke test (Forge) | done via real parseWorksheet → geminiService → normalizePayload (scripts/live-gemini.ts) |
 | S4 | KeySettingsModal, keyStore, CSP | todo |
 | S5 | Uploader, app machine, demo end-to-end | todo |
 | S6–S9 | Games + VictoryReview | later |
