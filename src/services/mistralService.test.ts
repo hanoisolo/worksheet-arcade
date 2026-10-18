@@ -161,11 +161,16 @@ describe('mistralService.structure', () => {
 
   it('returns bad_output when the model returns empty content', async () => {
     const fetchMock = vi.fn(async () => respond({ choices: [{ message: { content: '' } }] }));
+    fetchMock.mockResolvedValueOnce(respond({ choices: [{ message: { content: '' } }] }));
+    fetchMock.mockResolvedValueOnce(respond({ choices: [{ message: { content: '' } }] }));
     vi.stubGlobal('fetch', fetchMock);
 
     const result = await mistralService.structure(ctx, 'k');
 
     expect(result).toEqual({ ok: false, error: { kind: 'bad_output', message: expect.any(String) } });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(requestAt(fetchMock, 0).body.model).toBe('zai-glm-5-3');
+    expect(requestAt(fetchMock, 1).body.model).toBe('mistral-large-4');
   });
 
   it('joins the text chunks and skips thinking when content is a reasoning chunk array', async () => {
@@ -178,7 +183,10 @@ describe('mistralService.structure', () => {
 
   it('returns bad_output when a chunk array has only thinking', async () => {
     const content = [{ type: 'thinking', thinking: [{ type: 'text', text: 'hmm' }] }];
-    vi.stubGlobal('fetch', vi.fn(async () => respond({ choices: [{ message: { content } }] })));
+    const fetchMock = vi.fn(async () => respond({ choices: [{ message: { content } }] }));
+    fetchMock.mockResolvedValueOnce(respond({ choices: [{ message: { content } }] }));
+    fetchMock.mockResolvedValueOnce(respond({ choices: [{ message: { content } }] }));
+    vi.stubGlobal('fetch', fetchMock);
 
     const result = await mistralService.structure(ctx, 'k');
 
@@ -186,6 +194,55 @@ describe('mistralService.structure', () => {
       ok: false,
       error: { kind: 'bad_output', message: 'Mistral returned an empty response.' },
     });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(requestAt(fetchMock, 0).body.model).toBe('zai-glm-5-3');
+    expect(requestAt(fetchMock, 1).body.model).toBe('mistral-large-4');
+  });
+
+  it('falls back when the primary returns empty content', async () => {
+    const fetchMock = vi.fn(async () => respond({ message: 'unexpected call' }, 500));
+    fetchMock.mockResolvedValueOnce(respond({ choices: [{ message: { content: '' } }] }));
+    fetchMock.mockResolvedValueOnce(respond({ choices: [{ message: { content: '{"title":"Fallback"}' } }] }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await mistralService.structure(ctx, 'k');
+
+    expect(result).toEqual({ ok: true, value: '{"title":"Fallback"}' });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(requestAt(fetchMock, 0).body.model).toBe('zai-glm-5-3');
+    expect(requestAt(fetchMock, 1).body.model).toBe('mistral-large-4');
+  });
+
+  it('falls back when the primary returns only thinking chunks', async () => {
+    const thinking = [{ type: 'thinking', thinking: [{ type: 'text', text: 'hmm' }] }];
+    const fetchMock = vi.fn(async () => respond({ message: 'unexpected call' }, 500));
+    fetchMock.mockResolvedValueOnce(respond({ choices: [{ message: { content: thinking } }] }));
+    fetchMock.mockResolvedValueOnce(respond({ choices: [{ message: { content: '{"title":"Fallback"}' } }] }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await mistralService.structure(ctx, 'k');
+
+    expect(result).toEqual({ ok: true, value: '{"title":"Fallback"}' });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(requestAt(fetchMock, 0).body.model).toBe('zai-glm-5-3');
+    expect(requestAt(fetchMock, 1).body.model).toBe('mistral-large-4');
+  });
+
+  it('returns bad_output after a 500 and an empty fallback without a third call', async () => {
+    const fetchMock = vi.fn(async () => respond({ message: 'upstream error' }, 500));
+    fetchMock.mockResolvedValueOnce(respond({ message: 'upstream error' }, 500));
+    fetchMock.mockResolvedValueOnce(respond({ choices: [{ message: { content: '' } }] }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await mistralService.structure(ctx, 'k');
+
+    expect(result).toEqual({
+      ok: false,
+      error: { kind: 'bad_output', message: 'Mistral returned an empty response.' },
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(requestAt(fetchMock, 0).body.model).toBe('zai-glm-5-3');
+    expect(requestAt(fetchMock, 1).body.model).toBe('mistral-large-4');
   });
 
   it('returns bad_output without calling the API when context has no text', async () => {

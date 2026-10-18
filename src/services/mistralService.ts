@@ -98,12 +98,20 @@ async function structure(ctx: Context, key: string, signal?: AbortSignal, feedba
   }
   const fallbackModel = PROVIDERS.mistral.fallbackModel;
   let response = await callChat(PROVIDERS.mistral.model, ctx.text, key, signal, feedback);
+  let usedFallback = false;
   if (!response.ok && fallbackModel !== undefined && canRecoverWithFallback(response.error)) {
     response = await callChat(fallbackModel, ctx.text, key, signal, feedback);
+    usedFallback = true;
   }
   if (!response.ok) return response;
-  const data = response.value as ChatResponse;
-  const content = messageText(data.choices?.[0]?.message?.content);
+  let data = response.value as ChatResponse;
+  let content = messageText(data.choices?.[0]?.message?.content);
+  if (!content.trim() && fallbackModel !== undefined && !usedFallback) {
+    response = await callChat(fallbackModel, ctx.text, key, signal, feedback);
+    if (!response.ok) return response;
+    data = response.value as ChatResponse;
+    content = messageText(data.choices?.[0]?.message?.content);
+  }
   if (!content.trim()) {
     return { ok: false, error: { kind: 'bad_output', message: 'Mistral returned an empty response.' } };
   }
