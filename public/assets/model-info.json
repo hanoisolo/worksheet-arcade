@@ -1,0 +1,396 @@
+{
+  "project": "worksheet-arcade-art",
+  "created_utc": "2026-10-18T04:53:37Z",
+  "generate_model": {
+    "id": "Qwen/Qwen-Image-2512",
+    "licence": "Apache-2.0",
+    "revision": "25468b98e3276ca6700de15c6628e51b7de54a26"
+  },
+  "edit_model": {
+    "id": "Qwen/Qwen-Image-Edit-2511",
+    "licence": "Apache-2.0",
+    "revision": "6f3ccc0b56e431dc6a0c2b2039706d7d26f22cb9"
+  },
+  "settings": {
+    "width": 1328,
+    "height": 1328,
+    "steps": 50,
+    "true_cfg_scale": 4.0,
+    "edit_steps": 40,
+    "candidates": 3,
+    "boss_base": "all"
+  },
+  "negative_prompt": "text, letters, words, numbers, watermark, logo, signature, frame, blurry, low quality, jpeg artifacts, photorealistic, scary, horror, gore, blood, weapons, violence, extra limbs, cropped, cut off, multiple objects, busy background, famous characters, brand names",
+  "assets": {
+    "space_ship": {
+      "file": "space_ship.png",
+      "size": 256,
+      "kind": "sprite",
+      "seeds": [
+        1102,
+        1103,
+        1104
+      ],
+      "prompt": "a friendly cartoon rocket spaceship pointing straight up, rounded toy-like body, white and cyan hull, round pink cockpit window, two small fins, a small orange flame at the bottom, cheerful. flat 2D cartoon game sprite for a children's learning game, bold clean dark outlines, bright saturated colours, simple cel shading, one single object centred with empty space around it, whole object visible, plain flat light-grey background (#d9d9d9), no ground shadow"
+    },
+    "asteroid_target": {
+      "file": "asteroid_target.png",
+      "size": 256,
+      "kind": "sprite",
+      "seeds": [
+        2203,
+        2204,
+        2205
+      ],
+      "prompt": "a single round cartoon asteroid rock, warm golden-brown with a few simple craters, thick dark outline, a soft glowing golden rim like a game target badge, front view. flat 2D cartoon game sprite for a children's learning game, bold clean dark outlines, bright saturated colours, simple cel shading, one single object centred with empty space around it, whole object visible, plain flat light-grey background (#d9d9d9), no ground shadow"
+    },
+    "card_back": {
+      "file": "card_back.png",
+      "size": 512,
+      "kind": "card",
+      "seeds": [
+        4405,
+        4406,
+        4407
+      ],
+      "prompt": "the back of a game card: deep indigo (#120a3a) background, a symmetrical pattern of small neon cyan and pink stars and sparkles, a thin rounded neon border, a small cute gamepad emblem in the exact centre. flat vector illustration, crisp clean shapes, bright neon colours on a dark background, design fills the entire square image edge to edge"
+    },
+    "boss_idle": {
+      "file": "boss_idle.png",
+      "size": 512,
+      "kind": "sprite",
+      "seeds": [
+        3304,
+        3305,
+        3306
+      ],
+      "prompt": "a goofy, friendly slime monster boss for kids: a big round glossy green jelly blob with a tiny tilted purple crown, two big googly eyes, a wide silly grin with one tooth, little stubby arms, cute and funny, not scary, front view, full body. flat 2D cartoon game sprite for a children's learning game, bold clean dark outlines, bright saturated colours, simple cel shading, one single object centred with empty space around it, whole object visible, plain flat light-grey background (#d9d9d9), no ground shadow"
+    },
+    "space_bg": {
+      "file": "space_bg.webp",
+      "size": 1024,
+      "kind": "tile",
+      "seeds": [
+        5506,
+        5507,
+        5508
+      ],
+      "prompt": "deep outer space, dark navy and purple, many small scattered white and pale-cyan stars, a few soft faint nebula wisps, no planets, no large objects. seamless tileable texture, flat 2D cartoon game background for a children's game, evenly distributed detail, no focal point, no vignette, low contrast so text on top stays readable"
+    },
+    "dungeon_bg": {
+      "file": "dungeon_bg.webp",
+      "size": 1024,
+      "kind": "tile",
+      "seeds": [
+        6607,
+        6608,
+        6609
+      ],
+      "prompt": "a cartoon dungeon stone wall, rounded dark purple-grey stone bricks in a regular pattern, a little moss in the cracks, evenly lit, no torches, no doors, no objects, flat front view. seamless tileable texture, flat 2D cartoon game background for a children's game, evenly distributed detail, no focal point, no vignette, low contrast so text on top stays readable"
+    }
+  },
+  "edits": {
+    "boss_hit": {
+      "file": "boss_hit.png",
+      "size": 512,
+      "from": "boss_idle cN (same column)",
+      "instruction": "Keep the exact same slime monster: same green colour, same crown, same body shape and outline style, same plain light-grey background. Change only its pose and face: it has just been bonked by a magic spell, eyes squeezed shut in a funny wince, cheeks puffed, a few small yellow cartoon stars and sparkles around its head, body squished a little. Still cute and kid-friendly, no injuries."
+    },
+    "boss_defeated": {
+      "file": "boss_defeated.png",
+      "size": 512,
+      "from": "boss_idle cN (same column)",
+      "instruction": "Keep the exact same slime monster: same green colour, same crown, same outline style, same plain light-grey background. Change only its pose and face: it is defeated in a silly way, melted into a wobbly puddle, dizzy swirly eyes, crown slipping sideways, tongue sticking out a little. Cute and funny, not sad or scary."
+    }
+  },
+  "post_process": {
+    "sprites": "rembg isnet-general-use (flat-grey key if rembg failed), trim, 6% margin, LANCZOS resize, PNG (256-colour palette if over budget)",
+    "card_back": "opaque PNG 512x512",
+    "tiles": "offset-and-blend seamless (feather 25%), WebP 1024x1024",
+    "background_removal": "rembg"
+  },
+  "seam_check": {
+    "c1/space_bg.webp": {
+      "raw_master": {
+        "left_right": {
+          "edge": 10.1,
+          "p99": 4.27,
+          "ok": false
+        },
+        "top_bottom": {
+          "edge": 5.49,
+          "p99": 4.25,
+          "ok": false
+        },
+        "ok": false
+      },
+      "tile": {
+        "left_right": {
+          "edge": 2.11,
+          "p99": 4.7,
+          "ok": true
+        },
+        "top_bottom": {
+          "edge": 2.76,
+          "p99": 4.74,
+          "ok": true
+        },
+        "ok": true
+      },
+      "shipped_webp": {
+        "left_right": {
+          "edge": 2.83,
+          "p99": 4.38,
+          "ok": true
+        },
+        "top_bottom": {
+          "edge": 4.08,
+          "p99": 4.42,
+          "ok": true
+        },
+        "ok": true
+      },
+      "ok": true
+    },
+    "c2/space_bg.webp": {
+      "raw_master": {
+        "left_right": {
+          "edge": 10.6,
+          "p99": 5.35,
+          "ok": false
+        },
+        "top_bottom": {
+          "edge": 6.37,
+          "p99": 5.4,
+          "ok": false
+        },
+        "ok": false
+      },
+      "tile": {
+        "left_right": {
+          "edge": 2.34,
+          "p99": 5.53,
+          "ok": true
+        },
+        "top_bottom": {
+          "edge": 2.21,
+          "p99": 5.62,
+          "ok": true
+        },
+        "ok": true
+      },
+      "shipped_webp": {
+        "left_right": {
+          "edge": 3.53,
+          "p99": 5.36,
+          "ok": true
+        },
+        "top_bottom": {
+          "edge": 3.6,
+          "p99": 5.56,
+          "ok": true
+        },
+        "ok": true
+      },
+      "ok": true
+    },
+    "c3/space_bg.webp": {
+      "raw_master": {
+        "left_right": {
+          "edge": 5.35,
+          "p99": 5.25,
+          "ok": false
+        },
+        "top_bottom": {
+          "edge": 4.06,
+          "p99": 4.61,
+          "ok": true
+        },
+        "ok": false
+      },
+      "tile": {
+        "left_right": {
+          "edge": 2.0,
+          "p99": 5.35,
+          "ok": true
+        },
+        "top_bottom": {
+          "edge": 2.8,
+          "p99": 5.08,
+          "ok": true
+        },
+        "ok": true
+      },
+      "shipped_webp": {
+        "left_right": {
+          "edge": 3.19,
+          "p99": 4.98,
+          "ok": true
+        },
+        "top_bottom": {
+          "edge": 4.25,
+          "p99": 4.92,
+          "ok": true
+        },
+        "ok": true
+      },
+      "ok": true
+    },
+    "c1/dungeon_bg.webp": {
+      "raw_master": {
+        "left_right": {
+          "edge": 7.87,
+          "p99": 4.54,
+          "ok": false
+        },
+        "top_bottom": {
+          "edge": 37.15,
+          "p99": 11.81,
+          "ok": false
+        },
+        "ok": false
+      },
+      "tile": {
+        "left_right": {
+          "edge": 2.16,
+          "p99": 4.46,
+          "ok": true
+        },
+        "top_bottom": {
+          "edge": 7.38,
+          "p99": 11.65,
+          "ok": true
+        },
+        "ok": true
+      },
+      "shipped_webp": {
+        "left_right": {
+          "edge": 3.46,
+          "p99": 4.23,
+          "ok": true
+        },
+        "top_bottom": {
+          "edge": 9.56,
+          "p99": 11.8,
+          "ok": true
+        },
+        "ok": true
+      },
+      "ok": true
+    },
+    "c2/dungeon_bg.webp": {
+      "raw_master": {
+        "left_right": {
+          "edge": 10.22,
+          "p99": 5.54,
+          "ok": false
+        },
+        "top_bottom": {
+          "edge": 10.64,
+          "p99": 13.6,
+          "ok": true
+        },
+        "ok": false
+      },
+      "tile": {
+        "left_right": {
+          "edge": 1.92,
+          "p99": 5.59,
+          "ok": true
+        },
+        "top_bottom": {
+          "edge": 6.01,
+          "p99": 13.59,
+          "ok": true
+        },
+        "ok": true
+      },
+      "shipped_webp": {
+        "left_right": {
+          "edge": 3.63,
+          "p99": 5.56,
+          "ok": true
+        },
+        "top_bottom": {
+          "edge": 8.32,
+          "p99": 12.85,
+          "ok": true
+        },
+        "ok": true
+      },
+      "ok": true
+    },
+    "c3/dungeon_bg.webp": {
+      "raw_master": {
+        "left_right": {
+          "edge": 8.93,
+          "p99": 4.73,
+          "ok": false
+        },
+        "top_bottom": {
+          "edge": 9.41,
+          "p99": 15.99,
+          "ok": true
+        },
+        "ok": false
+      },
+      "tile": {
+        "left_right": {
+          "edge": 2.53,
+          "p99": 5.03,
+          "ok": true
+        },
+        "top_bottom": {
+          "edge": 4.73,
+          "p99": 15.99,
+          "ok": true
+        },
+        "ok": true
+      },
+      "shipped_webp": {
+        "left_right": {
+          "edge": 4.17,
+          "p99": 5.01,
+          "ok": true
+        },
+        "top_bottom": {
+          "edge": 6.49,
+          "p99": 15.77,
+          "ok": true
+        },
+        "ok": true
+      },
+      "ok": true
+    }
+  },
+  "file_bytes": {
+    "c1/space_ship.png": 50038,
+    "c2/space_ship.png": 45083,
+    "c3/space_ship.png": 44956,
+    "c1/asteroid_target.png": 14902,
+    "c2/asteroid_target.png": 15730,
+    "c3/asteroid_target.png": 16435,
+    "c1/card_back.png": 35840,
+    "c2/card_back.png": 47235,
+    "c3/card_back.png": 43253,
+    "c1/boss_idle.png": 33409,
+    "c2/boss_idle.png": 39443,
+    "c3/boss_idle.png": 40533,
+    "c1/space_bg.webp": 83218,
+    "c2/space_bg.webp": 78358,
+    "c3/space_bg.webp": 72834,
+    "c1/dungeon_bg.webp": 53414,
+    "c2/dungeon_bg.webp": 50614,
+    "c3/dungeon_bg.webp": 62086,
+    "c1/boss_hit.png": 48290,
+    "c2/boss_hit.png": 49680,
+    "c3/boss_hit.png": 44560,
+    "c1/boss_defeated.png": 39900,
+    "c2/boss_defeated.png": 43544,
+    "c3/boss_defeated.png": 42884
+  },
+  "failures": {
+    "generate": [],
+    "edit": []
+  }
+}

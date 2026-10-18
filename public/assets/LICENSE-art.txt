@@ -1,0 +1,12 @@
+Worksheet Arcade art
+====================
+Generated 2026-10-18T04:53:37Z with:
+  - Qwen/Qwen-Image-2512 (Apache-2.0, revision 25468b98e3276ca6700de15c6628e51b7de54a26)
+  - Qwen/Qwen-Image-Edit-2511 (Apache-2.0, revision 6f3ccc0b56e431dc6a0c2b2039706d7d26f22cb9)
+Qwen-Image-2512 and Qwen-Image-Edit-2511 are licensed under Apache-2.0
+(https://huggingface.co/Qwen/Qwen-Image-2512, https://huggingface.co/Qwen/Qwen-Image-Edit-2511).
+The model licences do not restrict use of generated images; commercial use is permitted.
+
+To the extent copyright applies, this artwork is Copyright (c) 2026 Don Nguyen and is released under
+the same MIT licence as Worksheet Arcade (see LICENSE in the repository). Prompts, seeds and settings
+are recorded in model-info.json so every image can be reproduced.

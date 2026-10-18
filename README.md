@@ -48,7 +48,7 @@ Pushing to `main` runs `.github/workflows/deploy.yml`: `npm ci`, then `npm run c
 
 ## Art
 
-The images in `public/assets/` are **placeholders** (CC0, see `public/assets/README.md`). Final art will replace them with the same file names.
+The images in `public/assets/` were generated with Qwen-Image-2512 and Qwen-Image-Edit-2511 (Apache-2.0); see `public/assets/README.md` and `public/assets/LICENSE-art.txt`.
 
 ## Licence
 
