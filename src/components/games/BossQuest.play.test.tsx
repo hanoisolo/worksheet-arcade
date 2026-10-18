@@ -51,9 +51,9 @@ test('a wrong spell bonks the hero, shows a hint, and moves focus to the next li
 test('a correct spell hits the boss and advances to the next question', () => {
   render(<BossQuest payload={payload} onBack={onBack} />);
   fireEvent.click(spell('a1'));
-  expect(screen.getByText('Your spell hit! −25 boss HP')).toBeTruthy();
+  expect(screen.getByText(/Your spell hit!/)).toBeTruthy();
   expect(screen.getByText('Because 1')).toBeTruthy();
-  expect(bar('Boss HP').getAttribute('aria-valuenow')).toBe('75');
+  expect(bar('Boss HP').getAttribute('aria-valuenow')).toBe('83'); expect(screen.getByText('Your spell hit! Boss HP is down to 83%.')).toBeTruthy();
   expect(spell('a1').getAttribute('data-state')).toBe('hit');
   expect(playSfx).toHaveBeenCalledWith('correct');
   const next = screen.getByRole('button', { name: 'Next question' });
@@ -68,7 +68,7 @@ test('keys 1-4 pick spells and focus wraps to the first live spell', () => {
   expect(spell('d1').getAttribute('data-state')).toBe('tried');
   expect(document.activeElement).toBe(spell('a1'));
   fireEvent.keyDown(window, { key: '1' });
-  expect(screen.getByText('Your spell hit! −25 boss HP')).toBeTruthy();
+  expect(screen.getByText(/Your spell hit!/)).toBeTruthy();
 });
 
 test('hero HP floors at 0 and the quest continues without a game over', () => {
@@ -89,5 +89,5 @@ test('hero HP floors at 0 and the quest continues without a game over', () => {
   expect(screen.getByText(/heroes never give up/)).toBeTruthy();
   expect(screen.queryByText(/game over/i)).toBeNull();
   fireEvent.click(spell('c3'));
-  expect(screen.getByText('Your spell hit! −25 boss HP')).toBeTruthy();
+  expect(screen.getByText(/Your spell hit!/)).toBeTruthy();
 });

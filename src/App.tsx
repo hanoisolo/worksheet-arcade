@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import { Gamepad2, KeyRound } from "lucide-react";
-import type { ParseStep, ProviderId, WorksheetFile } from "./types/game";
+import type { GamePayload, ParseStep, ProviderId, WorksheetFile } from "./types/game";
+import type { GameResult } from "./types/results";
 import { PROVIDERS } from "./config/providers";
 import KeySettingsModal from "./components/KeySettingsModal";
 import WorksheetUploader from "./components/WorksheetUploader";
@@ -19,6 +20,22 @@ import { getKey, getProvider } from "./state/keyStore";
 
 export default function App() {
   const [state, dispatch] = useReducer(appReducer, undefined, initialState);
+  // Results of finished games for the current worksheet (reset when the payload changes).
+  const [results, setResults] = useState<{
+    payload: GamePayload | null;
+    byGame: Partial<Record<GameId, GameResult>>;
+  }>({ payload: null, byGame: {} });
+  const currentPayload =
+    state.phase === "ready" || state.phase === "playing" ? state.payload : null;
+  const byGame = results.payload === currentPayload ? results.byGame : {};
+  const recordResult = (game: GameId, result: GameResult) =>
+    setResults((prev) => ({
+      payload: currentPayload,
+      byGame: {
+        ...(prev.payload === currentPayload ? prev.byGame : {}),
+        [game]: result,
+      },
+    }));
   const keyButtonRef = useRef<HTMLButtonElement>(null);
   const mainRef = useRef<HTMLElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -229,6 +246,7 @@ export default function App() {
           <ReadyScreen
             payload={state.payload}
             source={state.source}
+            results={byGame}
             onPick={(game: GameId) => dispatch({ type: "PICK_GAME", game })}
             onHome={goHome}
           />
@@ -237,6 +255,7 @@ export default function App() {
           <MemoryMatch
             key={state.game}
             payload={state.payload}
+            onComplete={(r) => recordResult("memory", r)}
             onBack={() => dispatch({ type: "BACK_TO_PICKER" })}
           />
         )}
@@ -244,6 +263,7 @@ export default function App() {
           <SpaceBlaster
             key={state.game}
             payload={state.payload}
+            onComplete={(r) => recordResult("space", r)}
             onBack={() => dispatch({ type: "BACK_TO_PICKER" })}
           />
         )}
@@ -251,6 +271,7 @@ export default function App() {
           <BossQuest
             key={state.game}
             payload={state.payload}
+            onComplete={(r) => recordResult("boss", r)}
             onBack={() => dispatch({ type: "BACK_TO_PICKER" })}
           />
         )}

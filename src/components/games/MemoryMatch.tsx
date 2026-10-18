@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { GamePayload } from '../../types/game'
+import type { GameResult } from '../../types/results'
 import { buildDeck, formatTime, type MemoryCard } from './memoryDeck'
 import { playSfx } from '../../utils/soundFx'
 import Confetti from '../Confetti'
@@ -7,7 +8,7 @@ import { ArrowLeft, RotateCcw, Trophy } from 'lucide-react'
 
 export const FLIP_BACK_MS = 900
 
-export default function MemoryMatch({ payload, onBack }: { payload: GamePayload; onBack: () => void }) {
+export default function MemoryMatch({ payload, onBack, onComplete }: { payload: GamePayload; onBack: () => void; onComplete?: (result: GameResult) => void }) {
   const [deck, setDeck] = useState<MemoryCard[]>(() => buildDeck(payload.matchingPairs))
   const [faceUp, setFaceUp] = useState<number[]>([])
   const [matched, setMatched] = useState<string[]>([])
@@ -58,6 +59,7 @@ export default function MemoryMatch({ payload, onBack }: { payload: GamePayload;
     setMoves(m => m + 1)
     if (a.pairId === b.pairId) {
       setMatched(m => [...m, a.pairId])
+      if (matched.length + 1 === totalPairs) onComplete?.({ summary: moves + 1 + ' moves · ' + formatTime(seconds) })
       setFaceUp([])
       playSfx('match')
       const term = a.kind === 'term' ? a : b

@@ -1,11 +1,13 @@
 import type { GamePayload } from '../../types/game';
+import type { GameResult } from '../../types/results';
 import { initialBlaster, makeBlasterReducer } from './spaceBlasterLogic';
+import { starsFor } from './questLogic';
 import SpaceHud from './SpaceHud';
 import AsteroidField from './AsteroidField';
+import VictoryReview from '../VictoryReview';
 import { playSfx } from '../../utils/soundFx';
 import { prefersReducedMotion } from '../../utils/motion';
-import Confetti from '../Confetti';
-import { ArrowLeft, RotateCcw, Trophy, ShieldAlert, Lightbulb, Sparkles } from 'lucide-react';
+import { ArrowLeft, Trophy, ShieldAlert, Lightbulb, Sparkles } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 
 const QUESTION_ID = 'blaster-question';
@@ -16,9 +18,10 @@ const primaryButtonClass =
 type Props = {
   payload: GamePayload;
   onBack: () => void;
+  onComplete?: (result: GameResult) => void;
 };
 
-export default function SpaceBlaster({ payload, onBack }: Props) {
+export default function SpaceBlaster({ payload, onBack, onComplete }: Props) {
   const levels = payload.levels;
   const reducer = useMemo(() => makeBlasterReducer(levels), [levels]);
   const [state, dispatch] = useReducer(reducer, undefined, initialBlaster);
@@ -27,7 +30,6 @@ export default function SpaceBlaster({ payload, onBack }: Props) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const fieldRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
-  const endRef = useRef<HTMLHeadingElement>(null);
 
   const pick = useCallback(
     (option: string) => {
@@ -76,7 +78,6 @@ export default function SpaceBlaster({ payload, onBack }: Props) {
       nextRef.current?.focus();
     } else if (state.phase === 'won') {
       playSfx('win');
-      endRef.current?.focus();
     }
   }, [state.phase]);
 
@@ -130,24 +131,16 @@ export default function SpaceBlaster({ payload, onBack }: Props) {
   if (state.phase === 'won') {
     return (
       <div className="mx-auto w-full max-w-3xl overflow-x-clip px-1 sm:px-4">
-        <section className="relative rounded-2xl bg-panel p-6 text-center sm:p-10">
-          <Confetti />
-          <Trophy className="mx-auto size-14 text-amber" aria-hidden="true" />
-          <h2 ref={endRef} tabIndex={-1} className="mt-4 text-3xl font-extrabold outline-none">
-            Mission complete!
-          </h2>
-          <p className="mt-2 text-2xl font-extrabold text-amber">Score: {state.score}</p>
-          <p className="mt-1 text-ink/90">
-            {state.firstTry} of {levels.length} on the first try · Shield {state.shield}%
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <button type="button" onClick={() => dispatch({ type: 'RESTART' })} className={primaryButtonClass}>
-              <RotateCcw className="size-4" aria-hidden="true" />
-              Play again
-            </button>
-            {backButton}
-          </div>
-        </section>
+        <VictoryReview
+          title="Mission complete!"
+          subtitle={'Score: ' + state.score}
+          stars={starsFor(state.firstTry, levels.length)}
+          stats={state.firstTry + ' of ' + levels.length + ' on the first try · Shield ' + state.shield + '%'}
+          mistakes={state.mistakes}
+          art={<Trophy className="mx-auto size-14 text-amber" aria-hidden="true" />}
+          onPlayAgain={() => dispatch({ type: 'RESTART' })}
+          onBack={onBack}
+        />
       </div>
     );
   }
@@ -184,7 +177,7 @@ export default function SpaceBlaster({ payload, onBack }: Props) {
               <button
                 ref={nextRef}
                 type="button"
-                onClick={() => dispatch({ type: 'NEXT' })}
+                onClick={() => { if (state.index + 1 >= levels.length) onComplete?.({ summary: 'Score ' + state.score, stars: starsFor(state.firstTry, levels.length) }); dispatch({ type: 'NEXT' }); }}
                 className={primaryButtonClass}
               >
                 {state.index + 1 >= levels.length ? 'See results' : 'Next question'}

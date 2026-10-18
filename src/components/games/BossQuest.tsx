@@ -1,11 +1,12 @@
 import type { GamePayload } from '../../types/game';
+import type { GameResult } from '../../types/results';
 import { initialQuest, isFinalBlow, makeQuestReducer, starsFor } from './questLogic';
 import BossArena, { BOSS_NAME } from './BossArena';
 import SpellChoices from './SpellChoices';
 import { playSfx } from '../../utils/soundFx';
 import { prefersReducedMotion } from '../../utils/motion';
-import Confetti from '../Confetti';
-import { ArrowLeft, Lightbulb, RotateCcw, Sparkles, Star, Swords } from 'lucide-react';
+import VictoryReview from '../VictoryReview';
+import { ArrowLeft, Lightbulb, Sparkles, Swords } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 const QUESTION_ID = 'quest-question';
@@ -16,9 +17,10 @@ const primaryButtonClass =
 type Props = {
   payload: GamePayload;
   onBack: () => void;
+  onComplete?: (result: GameResult) => void;
 };
 
-export default function BossQuest({ payload, onBack }: Props) {
+export default function BossQuest({ payload, onBack, onComplete }: Props) {
   const levels = payload.levels;
   const reducer = useMemo(() => makeQuestReducer(levels), [levels]);
   const [state, dispatch] = useReducer(reducer, undefined, initialQuest);
@@ -30,7 +32,6 @@ export default function BossQuest({ payload, onBack }: Props) {
   const heroRef = useRef<HTMLDivElement>(null);
   const groupRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
-  const endRef = useRef<HTMLHeadingElement>(null);
 
   const pick = useCallback(
     (option: string) => {
@@ -77,7 +78,6 @@ export default function BossQuest({ payload, onBack }: Props) {
       nextRef.current?.focus();
     } else if (state.phase === 'won') {
       playSfx('win');
-      endRef.current?.focus();
     }
   }, [state.phase]);
 
@@ -135,45 +135,16 @@ export default function BossQuest({ payload, onBack }: Props) {
     const stars = starsFor(state.firstTry, state.answered);
     return (
       <div className="mx-auto w-full max-w-3xl px-1 sm:px-4">
-        <section className="relative rounded-2xl bg-panel p-6 text-center sm:p-10">
-          <Confetti />
-          <img
-            src={ASSET + (state.bossHp === 0 ? 'boss_defeated.png' : 'boss_idle.png')}
-            alt={BOSS_NAME + (state.bossHp === 0 ? ', defeated' : '')}
-            className="mx-auto w-28 sm:w-36"
-          />
-          <h2 ref={endRef} tabIndex={-1} className="mt-2 text-3xl font-extrabold outline-none">
-            Victory!
-          </h2>
-          <p className="mt-1 text-lg text-ink/90">
-            {state.bossHp === 0
-              ? 'You defeated the ' + BOSS_NAME + '!'
-              : 'The ' + BOSS_NAME + ' ran away to practice!'}
-          </p>
-          <div
-            role="img"
-            aria-label={stars + ' of 3 stars'}
-            className="mt-3 flex justify-center gap-2"
-          >
-            {[1, 2, 3].map(i => (
-              <Star
-                key={i}
-                aria-hidden="true"
-                className={'size-10 ' + (i <= stars ? 'fill-amber text-amber' : 'text-ink/30')}
-              />
-            ))}
-          </div>
-          <p className="mt-2 text-ink/90">
-            {state.firstTry} of {state.answered} on the first try · Hero HP {state.heroHp}%
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <button type="button" onClick={restart} className={primaryButtonClass}>
-              <RotateCcw className="size-4" aria-hidden="true" />
-              Play again
-            </button>
-            {backButton}
-          </div>
-        </section>
+        <VictoryReview
+          title="Victory!"
+          subtitle={state.bossHp === 0 ? 'You defeated the ' + BOSS_NAME + '!' : 'The ' + BOSS_NAME + ' ran away to practice!'}
+          stars={stars}
+          stats={state.firstTry + ' of ' + state.answered + ' on the first try · Hero HP ' + state.heroHp + '%'}
+          mistakes={state.mistakes}
+          art={<img src={ASSET + 'boss_defeated.png'} alt={BOSS_NAME + ', defeated'} className="mx-auto w-28 sm:w-36" />}
+          onPlayAgain={restart}
+          onBack={onBack}
+        />
       </div>
     );
   }
@@ -221,14 +192,14 @@ export default function BossQuest({ payload, onBack }: Props) {
               <Sparkles className="size-5" aria-hidden="true" />
               {state.bossHp === 0
                 ? 'Final blow! The ' + BOSS_NAME + ' is defeated!'
-                : 'Your spell hit! −25 boss HP'}
+                : 'Your spell hit! Boss HP is down to ' + state.bossHp + '%.'}
             </p>
             <p className="mt-1 text-sm text-ink/90">{level.explanation}</p>
             <div className="mt-3 flex justify-end">
               <button
                 ref={nextRef}
                 type="button"
-                onClick={() => dispatch({ type: 'NEXT' })}
+                onClick={() => { if (isFinalBlow(state, levels.length)) onComplete?.({ summary: starsFor(state.firstTry, state.answered) + ' of 3 stars', stars: starsFor(state.firstTry, state.answered) }); dispatch({ type: 'NEXT' }); }}
                 className={primaryButtonClass}
               >
                 {isFinalBlow(state, levels.length) ? 'Claim victory' : 'Next question'}

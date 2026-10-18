@@ -11,5 +11,5 @@
 | S6 | soundFx + MemoryMatch | done |
 | S7 | SpaceBlaster | done |
 | S8 | BossQuest | done |
-| S9 | VictoryReview + picker polish | later |
+| S9 | Boss damage 100/n, VictoryReview, picker polish | done |
 | S10 | Art, deploy.yml, CNAME, a11y/perf, push (with Don's OK) | later |

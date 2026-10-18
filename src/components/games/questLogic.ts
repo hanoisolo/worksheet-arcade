@@ -3,9 +3,13 @@ import type { Mistake } from './spaceBlasterLogic'
 
 export type { Mistake }
 
-export const SPELL_DAMAGE = 25
 export const BOSS_ATTACK = 15
 export const START_HP = 100
+
+export function bossHpAfter(answered: number, levelCount: number): number {
+  if (levelCount <= 0 || answered >= levelCount) return 0
+  return Math.max(0, Math.round((START_HP * (levelCount - answered)) / levelCount))
+}
 
 export type QuestPhase = 'aim' | 'hit' | 'won'
 
@@ -65,7 +69,7 @@ export function makeQuestReducer(
           return {
             ...state,
             phase: 'hit',
-            bossHp: Math.max(0, state.bossHp - SPELL_DAMAGE),
+            bossHp: bossHpAfter(state.answered + 1, levels.length),
             answered: state.answered + 1,
             firstTry: state.firstTry + (state.tried.length === 0 ? 1 : 0),
             lastWrong: null
