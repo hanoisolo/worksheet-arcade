@@ -78,6 +78,27 @@ describe('geminiService', () => {
     expect(body.generationConfig.temperature).toBe(0.2);
   });
 
+  it('skips thought parts and joins only the answer text', async () => {
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({
+        candidates: [
+          {
+            content: {
+              parts: [
+                { text: 'Planning the levels first.', thought: true },
+                { text: '{"meta":' },
+                { text: '1}' },
+              ],
+            },
+            finishReason: 'STOP',
+          },
+        ],
+      }),
+    );
+    const res = await geminiService.structure({ file }, KEY);
+    expect(res).toEqual({ ok: true, value: '{"meta":1}' });
+  });
+
   it('returns bad_output when candidates are empty', async () => {
     fetchMock.mockResolvedValueOnce(jsonResponse({ candidates: [] }));
 

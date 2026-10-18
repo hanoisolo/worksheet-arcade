@@ -10,6 +10,7 @@ const TIMEOUT_MS = 120000;
 
 interface GeminiPart {
   text?: string;
+  thought?: boolean;
 }
 
 interface GeminiCandidate {
@@ -71,7 +72,7 @@ export const geminiService: ProviderService = {
     }
 
     const text = (candidate.content?.parts ?? [])
-      .map((part) => (typeof part.text === 'string' ? part.text : ''))
+      .map((part) => (part.thought !== true && typeof part.text === 'string' ? part.text : ''))
       .join('');
     if (!text.trim()) {
       return badOutput(

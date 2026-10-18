@@ -80,6 +80,18 @@ function canRecoverWithFallback(error: { kind: string; status?: number }): boole
   return error.kind === 'network' && error.status === undefined;
 }
 
+// Reasoning models (e.g. zai-glm-5-3) return content as an array of chunks:
+// { type: 'thinking', thinking: [...] } then { type: 'text', text }. Keep only the text chunks.
+function messageText(content: unknown): string {
+  if (typeof content === 'string') return content;
+  if (!Array.isArray(content)) return '';
+  return content
+    .map((chunk: { type?: unknown; text?: unknown } | null) =>
+      chunk?.type === 'text' && typeof chunk.text === 'string' ? chunk.text : '',
+    )
+    .join('');
+}
+
 async function structure(ctx: Context, key: string, signal?: AbortSignal, feedback?: string): Promise<Result<string>> {
   if (!ctx.text) {
     return { ok: false, error: { kind: 'bad_output', message: 'No worksheet text available to structure.' } };
@@ -91,8 +103,8 @@ async function structure(ctx: Context, key: string, signal?: AbortSignal, feedba
   }
   if (!response.ok) return response;
   const data = response.value as ChatResponse;
-  const content = data.choices?.[0]?.message?.content;
-  if (typeof content !== 'string' || !content.trim()) {
+  const content = messageText(data.choices?.[0]?.message?.content);
+  if (!content.trim()) {
     return { ok: false, error: { kind: 'bad_output', message: 'Mistral returned an empty response.' } };
   }
   return { ok: true, value: content };

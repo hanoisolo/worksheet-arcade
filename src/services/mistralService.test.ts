@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { WorksheetFile } from '../types/game';
 import { mistralService } from './mistralService';
+import { MISTRAL_REASONING_RESPONSE } from './__fixtures__/mistralReasoning';
 
 type FetchMock = ReturnType<typeof vi.fn>;
 type FetchCall = [string, { headers?: unknown; body?: string }];
@@ -165,6 +166,26 @@ describe('mistralService.structure', () => {
     const result = await mistralService.structure(ctx, 'k');
 
     expect(result).toEqual({ ok: false, error: { kind: 'bad_output', message: expect.any(String) } });
+  });
+
+  it('joins the text chunks and skips thinking when content is a reasoning chunk array', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => respond(MISTRAL_REASONING_RESPONSE)));
+
+    const result = await mistralService.structure(ctx, 'k');
+
+    expect(result).toEqual({ ok: true, value: '{"meta":{"title":"Fraction Frenzy"}}' });
+  });
+
+  it('returns bad_output when a chunk array has only thinking', async () => {
+    const content = [{ type: 'thinking', thinking: [{ type: 'text', text: 'hmm' }] }];
+    vi.stubGlobal('fetch', vi.fn(async () => respond({ choices: [{ message: { content } }] })));
+
+    const result = await mistralService.structure(ctx, 'k');
+
+    expect(result).toEqual({
+      ok: false,
+      error: { kind: 'bad_output', message: 'Mistral returned an empty response.' },
+    });
   });
 
   it('returns bad_output without calling the API when context has no text', async () => {
