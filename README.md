@@ -50,6 +50,8 @@ Pushing to `main` runs `.github/workflows/deploy.yml`: `npm ci`, then `npm run c
 
 The images in `public/assets/` are **placeholders** (CC0, see `public/assets/README.md`). Final art will replace them with the same file names.
 
-## Licences
+## Licence
+
+MIT © 2026 Don Nguyen, see [LICENSE](LICENSE).
 
 Third-party licences for the bundled libraries (React, lucide-react) are in `public/third-party-licenses.txt`, which is served as `/third-party-licenses.txt`.
