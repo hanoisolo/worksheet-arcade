@@ -22,7 +22,7 @@ describe('WorksheetUploader', () => {
     render(<WorksheetUploader file={null} onFile={vi.fn()} onClear={vi.fn()} />)
 
     expect(
-      screen.getByRole('button', { name: 'Upload worksheet: drop a file or press Enter to choose' })
+      screen.getByRole('button', { name: 'Drop your worksheet here, or press Enter to choose a file' })
     ).toBeTruthy()
     expect(screen.getByText('Drop your worksheet here')).toBeTruthy()
     expect(screen.getByText('PNG, JPEG, WEBP or PDF · PDFs up to 5 MB')).toBeTruthy()

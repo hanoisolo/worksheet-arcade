@@ -12,4 +12,4 @@
 | S7 | SpaceBlaster | done |
 | S8 | BossQuest | done |
 | S9 | Boss damage 100/n, VictoryReview, picker polish | done |
-| S10 | Art, deploy.yml, CNAME, a11y/perf, push (with Don's OK) | later |
+| S10 | Art, deploy.yml, CNAME, a11y/perf, push (with Don's OK) | prep done (placeholder art approved); repo/push/DNS waiting on Don |

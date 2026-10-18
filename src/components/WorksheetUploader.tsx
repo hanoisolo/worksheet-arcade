@@ -49,7 +49,7 @@ export default function WorksheetUploader({
       <div
         role="button"
         tabIndex={0}
-        aria-label="Upload worksheet: drop a file or press Enter to choose"
+        aria-label="Drop your worksheet here, or press Enter to choose a file"
         aria-busy={busy}
         onClick={() => fileInputRef.current?.click()}
         onKeyDown={(event) => {
@@ -74,7 +74,7 @@ export default function WorksheetUploader({
         }`}
       >
         <Upload aria-hidden className="h-10 w-10 text-cyan" />
-        <h3 className="text-lg font-extrabold text-ink">Drop your worksheet here</h3>
+        <h2 className="text-lg font-extrabold text-ink">Drop your worksheet here</h2>
         <p className="text-sm text-ink/85">PNG, JPEG, WEBP or PDF · PDFs up to 5 MB</p>
       </div>
 
