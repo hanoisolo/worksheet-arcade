@@ -10,5 +10,6 @@
 | S5 | Uploader, app machine, demo end-to-end | done |
 | S6 | soundFx + MemoryMatch | done |
 | S7 | SpaceBlaster | done |
-| S8–S9 | BossQuest, VictoryReview | later |
+| S8 | BossQuest | done |
+| S9 | VictoryReview + picker polish | later |
 | S10 | Art, deploy.yml, CNAME, a11y/perf, push (with Don's OK) | later |

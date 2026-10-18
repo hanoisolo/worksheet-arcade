@@ -6,8 +6,8 @@ import KeySettingsModal from "./components/KeySettingsModal";
 import WorksheetUploader from "./components/WorksheetUploader";
 import ParsingScreen from "./components/ParsingScreen";
 import ErrorScreen from "./components/ErrorScreen";
-import ReadyScreen, { GAMES } from "./components/ReadyScreen";
-import GamePlaceholder from "./components/GamePlaceholder";
+import ReadyScreen from "./components/ReadyScreen";
+import BossQuest from "./components/games/BossQuest";
 import MemoryMatch from "./components/games/MemoryMatch";
 import SpaceBlaster from "./components/games/SpaceBlaster";
 import MuteButton from "./components/MuteButton";
@@ -248,8 +248,9 @@ export default function App() {
           />
         )}
         {state.phase === "playing" && state.game === "boss" && (
-          <GamePlaceholder
-            title={GAMES.find((g) => g.id === state.game)?.title ?? "Game"}
+          <BossQuest
+            key={state.game}
+            payload={state.payload}
             onBack={() => dispatch({ type: "BACK_TO_PICKER" })}
           />
         )}
