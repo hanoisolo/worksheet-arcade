@@ -9,6 +9,7 @@ import ErrorScreen from "./components/ErrorScreen";
 import ReadyScreen, { GAMES } from "./components/ReadyScreen";
 import GamePlaceholder from "./components/GamePlaceholder";
 import MemoryMatch from "./components/games/MemoryMatch";
+import SpaceBlaster from "./components/games/SpaceBlaster";
 import MuteButton from "./components/MuteButton";
 import { appReducer, initialState } from "./state/appMachine";
 import type { AppState, GameId } from "./state/appMachine";
@@ -239,7 +240,14 @@ export default function App() {
             onBack={() => dispatch({ type: "BACK_TO_PICKER" })}
           />
         )}
-        {state.phase === "playing" && state.game !== "memory" && (
+        {state.phase === "playing" && state.game === "space" && (
+          <SpaceBlaster
+            key={state.game}
+            payload={state.payload}
+            onBack={() => dispatch({ type: "BACK_TO_PICKER" })}
+          />
+        )}
+        {state.phase === "playing" && state.game === "boss" && (
           <GamePlaceholder
             title={GAMES.find((g) => g.id === state.game)?.title ?? "Game"}
             onBack={() => dispatch({ type: "BACK_TO_PICKER" })}

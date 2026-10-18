@@ -15,7 +15,7 @@ test('demo flow with axe scan on the ready screen', async ({ page }) => {
   const axeResults = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
   expect(axeResults.violations).toEqual([]);
 
-  await page.getByRole('button', { name: /Space Blaster/ }).click();
+  await page.getByRole('button', { name: /Boss Quest/ }).click();
   await expect(page.getByText('Coming soon!')).toBeVisible();
 
   await page.getByRole('button', { name: 'Back to games' }).click();

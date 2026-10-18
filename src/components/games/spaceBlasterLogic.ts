@@ -13,7 +13,7 @@ export interface Mistake {
   explanation: string
 }
 
-export type BlasterPhase = 'aim' | 'hit' | 'won' | 'lost'
+export type BlasterPhase = 'aim' | 'hit' | 'won'
 
 export interface BlasterState {
   index: number
@@ -82,7 +82,7 @@ export function makeBlasterReducer(
               explanation: level.explanation,
             },
           ],
-          phase: shield === 0 ? 'lost' : 'aim',
+          phase: 'aim',
         }
       }
 

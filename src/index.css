@@ -49,7 +49,7 @@ body {
   animation: asteroid-drift 18s linear infinite;
 }
 .asteroid-field:hover .asteroid,
-.asteroid-field:focus-within .asteroid,
+.asteroid-field:has(:focus-visible) .asteroid,
 .asteroid-field[data-paused="true"] .asteroid {
   animation-play-state: paused;
 }

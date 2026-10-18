@@ -80,7 +80,7 @@ describe('spaceBlasterLogic', () => {
     expect(won.score).toBe(3 * POINTS);
   });
 
-  it('loses when the shield is depleted and never goes negative', () => {
+  it('never ends the game when the shield is empty (no game over)', () => {
     let state = initialBlaster();
     state = pick(state, 'b');
     state = pick(state, 'c');
@@ -92,9 +92,18 @@ describe('spaceBlasterLogic', () => {
     state = pick(state, 'a');
     state = pick(state, 'c');
     expect(state.shield).toBe(0);
-    expect(state.phase).toBe('lost');
+    expect(state.phase).toBe('aim');
 
-    expect(pick(state, 'd')).toBe(state);
+    state = pick(state, 'd');
+    expect(state.shield).toBe(0);
+    expect(state.phase).toBe('aim');
+
+    state = pick(state, 'b');
+    expect(state.phase).toBe('hit');
+    state = next(state);
+    state = pick(state, 'c');
+    state = next(state);
+    expect(state.phase).toBe('won');
     expect(state.shield).toBe(0);
   });
 

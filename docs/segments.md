@@ -9,5 +9,6 @@
 | S4 | KeySettingsModal, keyStore, CSP (S4-1…S4-5) | done |
 | S5 | Uploader, app machine, demo end-to-end | done |
 | S6 | soundFx + MemoryMatch | done |
-| S7–S9 | SpaceBlaster, BossQuest, VictoryReview | later |
+| S7 | SpaceBlaster | done |
+| S8–S9 | BossQuest, VictoryReview | later |
 | S10 | Art, deploy.yml, CNAME, a11y/perf, push (with Don's OK) | later |

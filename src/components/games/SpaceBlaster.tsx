@@ -77,9 +77,6 @@ export default function SpaceBlaster({ payload, onBack }: Props) {
     } else if (state.phase === 'won') {
       playSfx('win');
       endRef.current?.focus();
-    } else if (state.phase === 'lost') {
-      playSfx('hit');
-      endRef.current?.focus();
     }
   }, [state.phase]);
 
@@ -88,6 +85,22 @@ export default function SpaceBlaster({ payload, onBack }: Props) {
       headingRef.current?.focus();
     }
   }, [state.index, state.phase, state.tried.length]);
+
+  // After a wrong answer the tried asteroid is disabled; move focus to the next live one.
+  useEffect(() => {
+    if (state.phase !== 'aim' || !state.lastWrong || !level) return;
+    const buttons = Array.from(
+      fieldRef.current?.querySelectorAll<HTMLButtonElement>('[data-testid="asteroid"]') ?? [],
+    );
+    const start = level.options.indexOf(state.lastWrong);
+    for (let k = 1; k <= buttons.length; k++) {
+      const b = buttons[(start + k) % buttons.length];
+      if (b && !b.disabled) {
+        b.focus();
+        break;
+      }
+    }
+  }, [state.phase, state.lastWrong, state.tried.length, level]);
 
   const backButton = (
     <button
@@ -139,28 +152,6 @@ export default function SpaceBlaster({ payload, onBack }: Props) {
     );
   }
 
-  if (state.phase === 'lost') {
-    return (
-      <div className="mx-auto w-full max-w-3xl overflow-x-clip px-1 sm:px-4">
-        <section className="rounded-2xl bg-panel p-6 text-center sm:p-10">
-          <ShieldAlert className="mx-auto size-14 text-pink" aria-hidden="true" />
-          <h2 ref={endRef} tabIndex={-1} className="mt-4 text-3xl font-extrabold outline-none">
-            Shields down!
-          </h2>
-          <p className="mt-2 text-2xl font-extrabold text-amber">Score: {state.score}</p>
-          <p className="mt-1 text-ink/90">Every pilot needs practice. Want another go?</p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <button type="button" onClick={() => dispatch({ type: 'RESTART' })} className={primaryButtonClass}>
-              <RotateCcw className="size-4" aria-hidden="true" />
-              Try again
-            </button>
-            {backButton}
-          </div>
-        </section>
-      </div>
-    );
-  }
-
   return (
     <div className="mx-auto w-full max-w-3xl overflow-x-clip px-1 sm:px-4">
       <SpaceHud
@@ -204,7 +195,7 @@ export default function SpaceBlaster({ payload, onBack }: Props) {
           <div className="rounded-2xl border-2 border-amber/60 bg-amber/10 p-4 text-left">
             <p className="flex items-center gap-2 font-extrabold text-amber">
               <ShieldAlert className="size-5" aria-hidden="true" />
-              Shield −20. Not quite — try another asteroid!
+              {state.shield > 0 ? 'Shield −20. Not quite — try another asteroid!' : 'Not quite — try another asteroid! Your shield is empty, but you can keep flying.'}
             </p>
             <p className="mt-1 flex gap-2 text-sm text-ink/90">
               <Lightbulb className="size-4 shrink-0 text-amber" aria-hidden="true" />

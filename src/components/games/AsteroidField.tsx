@@ -77,7 +77,7 @@ export default function AsteroidField({
             </span>
             <span
               aria-hidden="true"
-              className="absolute -left-1 -top-1 flex size-6 items-center justify-center rounded-full bg-cyan text-xs font-extrabold text-bg"
+              className="absolute left-[14%] top-[14%] ring-2 ring-bg flex size-6 items-center justify-center rounded-full bg-cyan text-xs font-extrabold text-bg"
             >
               {n}
             </span>
